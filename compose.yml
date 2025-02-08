@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: crimes
+      MYSQL_USER: user
+      MYSQL_PASSWORD: p4ssw0rd
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+  
+  phpmyadmin:
+    image: "phpmyadmin/phpmyadmin:latest"
+    environment:
+      PMA_HOST: db
+      PMA_USER: user
+      PMA_PASSWORD: p4ssw0rd
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DISABLE_AUTH: true
+    ports:
+      - 8787:8787
+    volumes:
+      - ./app:/home/rstudio/app
+
+volumes:
+  db_data:
